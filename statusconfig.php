@@ -4,7 +4,7 @@ $servers = array(
 	array(
 		'name' => 'felix',
 		'host' => 'Linode',
-		'location' => 'Atlanta, GA',
+		'location' => 'Dallas, TX',
 		'ram' => '1024 MB',
 		'storage' => '24 GB',
 		'bandwidth' => '2 TB',
