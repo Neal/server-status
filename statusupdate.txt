@@ -1,0 +1,28 @@
+<?php
+
+$return_data['hostname'] = trim(shell_exec('/bin/hostname'));
+
+/**  UPTIME **/
+$uptime = trim(shell_exec('/usr/bin/uptime'));
+$return_data['uptime'] = split('up ', split(', ', $uptime)[0])[1];
+$return_data['load']['one'] = split(', ', split('average: ', $uptime)[1])[0];
+$return_data['load']['five'] = split(', ', split('average: ', $uptime)[1])[1];
+$return_data['load']['fifteen'] = split(', ', split('average: ', $uptime)[1])[2];
+
+/**  MEMORY  **/
+$return_data['memory']['total'] = intval(trim(shell_exec("free | grep -v shared | awk '/Mem/ { printf $2 }'")));
+$return_data['memory']['used'] = intval(trim(shell_exec("free | grep -v shared | awk '/Mem/ { printf $3 }'")));
+$return_data['memory']['free'] = intval(trim(shell_exec("free | grep -v shared | awk '/Mem/ { printf $4 }'")));
+$return_data['memory']['bufcac'] = intval(trim(shell_exec("free | grep -v shared | awk '/Mem/ { printf $6 + $7 }'")));
+
+/**  HDD  **/
+$return_data['disk']['total'] = intval(trim(shell_exec("df --total | awk  ' /total/ { print $2 }'")));
+$return_data['disk']['used'] = intval(trim(shell_exec("df --total | awk  ' /total/ { print $3 }'")));
+$return_data['disk']['free'] = intval(trim(shell_exec("df --total | awk  ' /total/ { print $4 }'")));
+
+
+header('Content-Type: text/plain');
+
+echo json_encode($return_data);
+
+?>
