@@ -3,8 +3,8 @@ function size_readable($size, $retstring = '%01.2f %s') {
 	$prefix = array('B', 'K', 'MB', 'GB', 'TB', 'PB');
 
 	$i = 0;
-	while ($size >= 1000 && $i < count($prefix)-1) {
-		$size /= 1000;
+	while ($size >= 1024 && $i < count($prefix)-1) {
+		$size /= 1024;
 		$i++;
 	}
 
@@ -98,8 +98,8 @@ foreach ($servers as $serverinfo) {
 	elseif ($memprogress < '90') { $memlevel = "warning"; }
 	else { $memlevel = "danger"; }
 
-	$hddused = size_readable($server['disk']['used'] * 1024);
-	$hddtotal = size_readable($server['disk']['total'] * 1024);
+	$hddused = size_readable($server['disk']['used']);
+	$hddtotal = size_readable($server['disk']['total']);
 	$hddprogress = $hddused / $hddtotal * 100;
 
 	if ($hddprogress < '70') { $hddlevel = "success"; }
