@@ -1,28 +1,37 @@
 <?php
 
-$return_data['hostname'] = trim(shell_exec('/bin/hostname'));
-
-/**  UPTIME **/
-$uptime = trim(shell_exec('/usr/bin/uptime'));
-$return_data['uptime'] = split('up ', split(', ', $uptime)[0])[1];
-$return_data['load']['one'] = split(', ', split('average: ', $uptime)[1])[0];
-$return_data['load']['five'] = split(', ', split('average: ', $uptime)[1])[1];
-$return_data['load']['fifteen'] = split(', ', split('average: ', $uptime)[1])[2];
-
-/**  MEMORY  **/
-$return_data['memory']['total'] = intval(trim(shell_exec("free | grep -v shared | awk '/Mem/ { printf $2 }'")));
-$return_data['memory']['used'] = intval(trim(shell_exec("free | grep -v shared | awk '/Mem/ { printf $3 }'")));
-$return_data['memory']['free'] = intval(trim(shell_exec("free | grep -v shared | awk '/Mem/ { printf $4 }'")));
-$return_data['memory']['bufcac'] = intval(trim(shell_exec("free | grep -v shared | awk '/Mem/ { printf $6 + $7 }'")));
-
-/**  HDD  **/
+/**  DISK  **/
+$return_data['disk']['free']  = disk_free_space('/');
 $return_data['disk']['total'] = disk_total_space('/');
-$return_data['disk']['free'] = disk_free_space('/');
-$return_data['disk']['used'] = $return_data['disk']['total'] - $return_data['disk']['free'];
+$return_data['disk']['used']  = $return_data['disk']['total'] - $return_data['disk']['free'];
+
+/** LOAD **/
+$return_data['load'] = sys_getloadavg();
+
+/** MEMORY **/
+$fh = fopen('/proc/meminfo', 'r');
+while ($l = fgets($fh)) {
+	$meminfo[strtok($l, ':')] = trim(strtok(''));
+}
+fclose($fh);
+$return_data['memory']['bufcac'] = intval(str_replace(' kB', null, $meminfo['Buffers'])) + intval(str_replace(' kB', null, $meminfo['Cached']));
+$return_data['memory']['free']   = intval(str_replace(' kB', null, $meminfo['MemFree'])) + $return_data['memory']['bufcac'];
+$return_data['memory']['total']  = intval(str_replace(' kB', null, $meminfo['MemTotal']));
+$return_data['memory']['used']   = $return_data['memory']['total'] - $return_data['memory']['free'];
+
+/** UPTIME **/
+$fh = fopen('/proc/uptime', 'r');
+$uptime = fgets($fh);
+fclose($fh);
+$uptime_secs = $uptime % 60;
+$uptime_mins = floor($uptime / 60) % 60;
+$uptime_hrs  = floor($uptime / 60 / 60) % 24;
+$uptime_days = floor($uptime / 60 / 60 / 24);
+$return_data['uptime'] = $uptime_days > 0 ? $uptime_days . ' day'.($uptime_days > 1 ? 's' : '') : $uptime_hrs.':'.$uptime_mins.':'.$uptime_secs;
 
 
 header('Content-Type: text/plain');
 
-echo json_encode($return_data);
+print json_encode($return_data, JSON_PRETTY_PRINT);
 
 ?>
