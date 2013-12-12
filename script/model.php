@@ -28,6 +28,8 @@ foreach ($servers as $name => $info) {
 	$status->load[1]          = sprintf('%.2f', $status->load[1]);
 	$status->load[2]          = sprintf('%.2f', $status->load[2]);
 
+	$status->memory->used     = $status->memory->used * 1024;
+	$status->memory->total    = $status->memory->total * 1024;
 	$status->memory->progress = $status->memory->used / $status->memory->total * 100;
 	$status->memory->level    = get_level($status->memory->progress);
 
