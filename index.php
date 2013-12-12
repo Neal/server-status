@@ -71,9 +71,9 @@
 										</div>
 									</td>
 									<td>
-										<span class="label label-success"><?=$info->status->load->one?></span>
-										<span class="label label-success"><?=$info->status->load->five?></span>
-										<span class="label label-success"><?=$info->status->load->fifteen?></span>
+										<span class="label label-success"><?=$info->status->load[0]?></span>
+										<span class="label label-success"><?=$info->status->load[1]?></span>
+										<span class="label label-success"><?=$info->status->load[2]?></span>
 									</td>
 								</tr>
 <?php endforeach; ?>
