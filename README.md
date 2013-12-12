@@ -3,6 +3,7 @@ A very simple server status web frontend. Inspired by various others found on th
 
 ## files
 
+* `api.php` - json data with all server data
 * `index.php` - web frontend
 * `script/config.php` - config and server info
 * `script/model.php` - php work for the frontend
